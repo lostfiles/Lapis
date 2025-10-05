@@ -1,0 +1,8 @@
+// Very simple function test
+public func test(param)
+    print("Parameter:", param);
+    return param + 1;
+end
+
+public var result = test(10);
+print("Result:", result);

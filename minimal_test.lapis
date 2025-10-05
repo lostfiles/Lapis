@@ -1,0 +1,5 @@
+public func simple_test(args**)
+    Console.print("Args: " + args);
+end
+
+simple_test(1, 2);
