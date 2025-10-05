@@ -1,1 +1,2 @@
-*.lapis linguist-language=Lapis
+*.lapis linguist-language=lapis
+*.lapis linguist-detectable=true
