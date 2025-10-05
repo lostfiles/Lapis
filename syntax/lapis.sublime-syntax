@@ -1,0 +1,239 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: Lapis
+file_extensions:
+  - lapis
+scope: source.lapis
+# Lapis.sublime-syntax
+
+# Define the syntax highlighting rules for Lapis language
+contexts:
+  main:
+    # Single-line comments
+    - match: '//.*$'
+      scope: comment.line.double-slash.lapis
+
+    # Multi-line comments with nesting support
+    - match: '/\*'
+      scope: punctuation.definition.comment.begin.lapis
+      push: block_comment
+
+    # Keywords - updated with all new Lapis keywords
+    - match: '\b(package|use|var|func|class|if|elif|else|while|for|in|return|end|this|init|public|private|true|false|null|try|catch|finally|switch|case|default|break|continue)\b'
+      scope: keyword.lapis
+
+    # Control flow keywords
+    - match: '\b(if|elif|else|while|for|in|try|catch|finally|switch|case|default|break|continue)\b'
+      scope: keyword.control.lapis
+
+    # Storage keywords
+    - match: '\b(var|func|class|public|private)\b'
+      scope: storage.type.lapis
+
+    # Language constants
+    - match: '\btrue\b'
+      scope: constant.language.boolean.true.lapis
+    - match: '\bfalse\b'
+      scope: constant.language.boolean.false.lapis
+    - match: '\bnull\b'
+      scope: constant.language.null.lapis
+    - match: '\bthis\b'
+      scope: variable.language.this.lapis
+
+    # Template literals with expression support
+    - match: '`'
+      scope: punctuation.definition.string.begin.lapis
+      push: template_literal
+
+    # Double-quoted strings with escape sequences
+    - match: '"'
+      scope: punctuation.definition.string.begin.lapis
+      push: double_quoted_string
+
+    # Single-quoted strings with escape sequences  
+    - match: "'"
+      scope: punctuation.definition.string.begin.lapis
+      push: single_quoted_string
+
+    # Numbers (integers and floats)
+    - match: '\b\d+\.\d+\b'
+      scope: constant.numeric.float.lapis
+    - match: '\b\d+\b'
+      scope: constant.numeric.integer.lapis
+
+    # Operators
+    - match: '\*\*'
+      scope: keyword.operator.arithmetic.power.lapis
+    - match: '\+\+|--'
+      scope: keyword.operator.arithmetic.increment.lapis
+    - match: '==|!=|<=|>=|<|>'
+      scope: keyword.operator.comparison.lapis
+    - match: '&&|\|\|'
+      scope: keyword.operator.logical.lapis
+    - match: '!'
+      scope: keyword.operator.logical.not.lapis
+    - match: '='
+      scope: keyword.operator.assignment.lapis
+    - match: '\+|-|\*|/|%'
+      scope: keyword.operator.arithmetic.lapis
+
+    # Punctuation
+    - match: '[{}]'
+      scope: punctuation.section.block.lapis
+    - match: '[\[\]]'
+      scope: punctuation.section.brackets.lapis
+    - match: '[()]'
+      scope: punctuation.section.parens.lapis
+    - match: ';'
+      scope: punctuation.terminator.lapis
+    - match: ','
+      scope: punctuation.separator.comma.lapis
+    - match: '\.'
+      scope: punctuation.accessor.dot.lapis
+    - match: ':'
+      scope: punctuation.separator.colon.lapis
+
+    # Variable declarations
+    - match: '\b(var)\s+(\w+)\b'
+      captures:
+        1: storage.type.lapis
+        2: variable.other.lapis
+
+    # Class declarations
+    - match: '\b(class)\s+(\w+)\b'
+      captures:
+        1: storage.type.lapis
+        2: entity.name.class.lapis
+
+    # Function declarations
+    - match: '\b(func)\s+(\w+)\b'
+      captures:
+        1: storage.type.lapis
+        2: entity.name.function.lapis
+
+    # Function calls
+    - match: '\b(\w+)\s*(?=\()'
+      scope: entity.name.function.call.lapis
+
+    # Method calls
+    - match: '\.(\w+)\s*(?=\()'
+      captures:
+        1: entity.name.function.method.lapis
+
+    # Property access
+    - match: '\.(\w+)\b'
+      captures:
+        1: variable.other.property.lapis
+
+  # Block comment context with nesting support
+  block_comment:
+    - meta_scope: comment.block.lapis
+    - match: '/\*'
+      scope: punctuation.definition.comment.begin.lapis
+      push: block_comment
+    - match: '\*/'
+      scope: punctuation.definition.comment.end.lapis
+      pop: true
+
+  # Double-quoted string context with escape sequences
+  double_quoted_string:
+    - meta_scope: string.quoted.double.lapis
+    - match: '\\["\\nrt]'
+      scope: constant.character.escape.lapis
+    - match: '"'
+      scope: punctuation.definition.string.end.lapis
+      pop: true
+
+  # Single-quoted string context with escape sequences
+  single_quoted_string:
+    - meta_scope: string.quoted.single.lapis
+    - match: "\\['\\\\nrt]"
+      scope: constant.character.escape.lapis
+    - match: "'"
+      scope: punctuation.definition.string.end.lapis
+      pop: true
+
+  # Template literal context with expression interpolation
+  template_literal:
+    - meta_scope: string.template.lapis
+    - match: '\\[`{\\}nrt]'
+      scope: constant.character.escape.lapis
+    - match: '\{'
+      scope: punctuation.section.interpolation.begin.lapis
+      push: template_expression
+    - match: '`'
+      scope: punctuation.definition.string.end.lapis
+      pop: true
+
+  # Template expression context (Lapis code inside {})
+  template_expression:
+    - meta_scope: meta.interpolation.lapis
+    - match: '\}'
+      scope: punctuation.section.interpolation.end.lapis
+      pop: true
+    - include: expressions
+
+  # Expression context (for use in template literals and other contexts)
+  expressions:
+    # Language constants
+    - match: '\b(true|false|null)\b'
+      scope: constant.language.lapis
+    - match: '\bthis\b'
+      scope: variable.language.this.lapis
+    
+    # Numbers
+    - match: '\b\d+\.\d+\b'
+      scope: constant.numeric.float.lapis
+    - match: '\b\d+\b'
+      scope: constant.numeric.integer.lapis
+    
+    # Operators
+    - match: '\*\*'
+      scope: keyword.operator.arithmetic.power.lapis
+    - match: '\+\+|--'
+      scope: keyword.operator.arithmetic.increment.lapis
+    - match: '==|!=|<=|>=|<|>'
+      scope: keyword.operator.comparison.lapis
+    - match: '&&|\|\|'
+      scope: keyword.operator.logical.lapis
+    - match: '!'
+      scope: keyword.operator.logical.not.lapis
+    - match: '\+|-|\*|/|%'
+      scope: keyword.operator.arithmetic.lapis
+    
+    # Punctuation
+    - match: '[()]'
+      scope: punctuation.section.parens.lapis
+    - match: '[\[\]]'
+      scope: punctuation.section.brackets.lapis
+    - match: ','
+      scope: punctuation.separator.comma.lapis
+    - match: '\.'
+      scope: punctuation.accessor.dot.lapis
+    
+    # Function calls
+    - match: '\b(\w+)\s*(?=\()'
+      scope: entity.name.function.call.lapis
+    
+    # Method calls
+    - match: '\.(\w+)\s*(?=\()'
+      captures:
+        1: entity.name.function.method.lapis
+    
+    # Property access
+    - match: '\.(\w+)\b'
+      captures:
+        1: variable.other.property.lapis
+    
+    # String literals in expressions
+    - match: '"'
+      scope: punctuation.definition.string.begin.lapis
+      push: double_quoted_string
+    - match: "'"
+      scope: punctuation.definition.string.begin.lapis
+      push: single_quoted_string
+    
+    # Variables and identifiers (this should fix {name})
+    - match: '\b\w+\b'
+      scope: variable.other.lapis
