@@ -1,0 +1,5 @@
+func message(msg)
+  print(msg);
+end
+
+message("hello world!");
